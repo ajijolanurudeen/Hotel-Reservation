@@ -2,17 +2,17 @@ import { Entity,Column,PrimaryGeneratedColumn,OneToMany} from "typeorm";
 import { Room } from "../rooms/entity/rooms.entity";
 @Entity({ name: 'Hotels' })
 export class Hotels{
-    @PrimaryGeneratedColumn()
-    id:number;
+    @PrimaryGeneratedColumn("uuid")
+    id: string;
 
     @Column()
-    name:string;
+    name: string;
 
     @Column()
-    adress:string;
+    adress: string;
 
     @Column()
-    location:string
+    location: string
 
     @OneToMany(() => Room, room => room.hotel)
     rooms: Room[];

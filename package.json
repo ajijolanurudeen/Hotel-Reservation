@@ -28,6 +28,7 @@
     "@nestjs/typeorm": "^10.0.2",
     "auth": "^1.2.2",
     "bcrypt": "^5.1.1",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "guard": "^0.1.2",
     "mysql2": "^3.11.3",

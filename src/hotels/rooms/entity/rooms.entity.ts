@@ -3,26 +3,29 @@ import { Hotels } from "src/hotels/entity/hotels.entity";
 import { Reservation } from "src/reservations/entities/reservation.entities";
 @Entity({name:"rooms"})
 export class Room{
-    @PrimaryGeneratedColumn()
-    id:number
+    @PrimaryGeneratedColumn("uuid")
+    id: string
     
     @Column()
-    name:string
+    name: string
 
     @Column()
-    roomType:string
+    roomType: string
 
     @Column()
-    floor:number
+    floor: number
 
     @Column()
     isAvailable:boolean
+    
+    @Column()
+    roomNumber: number
 
     @ManyToOne(() => Hotels, hotel => hotel.rooms)
     hotel: Hotels;
     
     @Column()
-    hotelId:number
+    hotelId: string
 
     @OneToMany(() => Reservation, (reservation) => reservation.room)  // One-to-many with reservations
     reservations: Reservation[];

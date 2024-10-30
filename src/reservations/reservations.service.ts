@@ -5,6 +5,7 @@ import { Reservation } from './entities/reservation.entities';
 import { CreateReservationDto } from './dtos/create-reservation-dto';
 import { User } from 'src/users/entity/user.entities';
 import { Room } from 'src/hotels/rooms/entity/rooms.entity';
+import { reservationInterface } from './interfaces/reservation.interface';
 
 @Injectable()
 export class ReservationService {
@@ -18,17 +19,18 @@ export class ReservationService {
   ) {}
 
   // Create a new reservation
-  async createReservation(createReservationDto: CreateReservationDto): Promise<Reservation> {
-    const { userId, roomId, startDate,endDate, status } = createReservationDto;
+  async createReservation(createReservationDto: reservationInterface): Promise<Reservation> {
+    const { email, roomNumber, startDate,endDate, status } = createReservationDto;
 
-    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const user = await this.userRepository.findOne({ where: { email } });
 
     if (!user) throw new Error('User not found');
 
-    const room = await this.roomRepository.findOne({ where: { id: roomId }, relations: ['hotel'] });
+    const room = await this.roomRepository.findOne({ where: { roomNumber}, relations: ['hotel'] });
  // Get the room with hotel
     if (!room) throw new Error('Room not found');
-
+// If room is already booked
+    if (room.isAvailable=false)throw new Error('room is already booked')
     const reservation = this.reservationRepository.create({
       user,
       room,
@@ -41,17 +43,17 @@ export class ReservationService {
   }
 
   // Find reservations by user
-  async findReservationsByUser(userId: number): Promise<Reservation[]> {
+  async findReservationsByUser(email: string): Promise<Reservation[]> {
     return this.reservationRepository.find({
-      where: { user: { id: userId } },
+      where: {email },
       relations: ['user', 'room', 'room.hotel'],  // Include the room and its hotel
     });
   }
 
   // Find reservations by room
-  async findReservationsByRoom(roomId: number): Promise<Reservation[]> {
+  async findReservationsByRoom(roomNumber: number): Promise<Reservation[]> {
     return this.reservationRepository.find({
-      where: { room: { id: roomId } },
+      where: { roomNumber } ,
       relations: ['user', 'room', 'room.hotel'],  // Include room and its hotel
     });
   }

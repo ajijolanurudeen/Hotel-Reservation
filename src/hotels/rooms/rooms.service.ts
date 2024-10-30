@@ -3,25 +3,35 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Room } from './entity/rooms.entity';
 import { createQueryBuilder, Repository } from 'typeorm';
 import { CreateRoomDto } from './create-rooms-dto/create-rooms-dto';
+import { roomInterface } from './interfaces/room.interface';
 
 @Injectable()
 export class RoomsService {
     constructor(@InjectRepository(Room)
-    private roomrepository:Repository<Room>){}
+    private roomrepository: Repository<Room>){}
 
-async createRoom(CreateRoomDto:CreateRoomDto):Promise<Room>{
-    const roomId= CreateRoomDto.id;
-    const roomAlreadyExists = await this.roomrepository
-    .createQueryBuilder('room')
-    .where('room.id=:roomId',{roomId})
-    .getOne()
+async createRoom(CreateRoomDto: roomInterface):Promise<Room>{
+    const {
+        roomType,
+        name,
+        floor,
+        isAvailable,
+        hotelId
+    }= CreateRoomDto;
+    const roomAlreadyExists = await this.roomrepository.findOne({
+        where:{
+            name
+        }
+    })
+    
     if(roomAlreadyExists){
         throw new HttpException('this room already exists',HttpStatus.BAD_REQUEST);
 
     }
-    const room =this.roomrepository.create(CreateRoomDto)
+    const room= this.roomrepository.save({
+        ...CreateRoomDto
+    })
 
-    await this.roomrepository.save(room);
     return room
 }
 
@@ -63,6 +73,4 @@ async findByIsAvailable(isAvailable:boolean):Promise<Room|null>{
 async delete(id:number):Promise<void>{
     await this.roomrepository.delete(id)
 }
-
-
 }

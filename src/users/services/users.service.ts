@@ -6,6 +6,7 @@ import { CreateUserDto } from '../dto/create-user-dto';
 import * as bcrypt from 'bcrypt'
 import { SigninDto } from 'src/auth/dto/Sign-In-User.dto';
 import { NotFoundError } from 'rxjs';
+import { createUser } from '../interfaces/user.interfaces';
 
 export type user =any
 @Injectable()
@@ -14,42 +15,34 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>
   ) {}
-  async createUser(createUserDto:CreateUserDto):Promise<User>{
+  async createUser(createUserDto: createUser):Promise<User>{
+    const {
+      firstName,
+      email,
+      lastName,
+      password,
+      isActive
+    } = createUserDto
     const saltRounds = 10;
-    const userId = createUserDto.id;
-    const existingUser = await this.usersRepository
-    .createQueryBuilder('user')
-    .where('user.id=:userId', { userId: userId })
-    .select(['user.id'])
-    .getOne();
+    const existingUser = await this.usersRepository.findOne({
+      where: {
+        email
+      }
+    })
+    
     if(existingUser){
       throw new HttpException('user id already exists',HttpStatus.BAD_REQUEST);
     }
-    createUserDto.password= await bcrypt.hash(
-      createUserDto.password,
+    const hashedPassword = await bcrypt.hash(
+      password,
       saltRounds,
     );
-    const user =this.usersRepository.create(createUserDto)
-
-    await this.usersRepository.save(user);
+    const user = this.usersRepository.save({
+      ...createUserDto,
+      password: hashedPassword
+    })
     return user
   }
-  // async create(user:User){
-  //   const User = this.usersRepository.create(user)
-  //   return await this.usersRepository.save(User);
-  // };
-
-  // async create(SigninDto:SigninDto):Promise<User>{
-  //   const {lastName,password}=SigninDto
-  //   const salt = await bcrypt.genSalt();
-  //   const hashedPassword = await bcrypt.hash(password, salt);
-
-  //   const user = new User();
-  //   user.lastName = lastName;
-  //   user.password = hashedPassword;
-
-  //   return this.usersRepository.save(user);
-  // }
 
   findAll(): Promise<User[]> {
     return this.usersRepository.find();

@@ -17,10 +17,10 @@ export class Reservation{
     status:string;
 
     @Column()
-    userId:number
+    email:string
 
     @Column()
-    roomId:number
+    roomNumber:number
     
     @ManyToOne(() => User, (user) => user.reservations, { onDelete: 'CASCADE' })  // Link to User
     user: User;

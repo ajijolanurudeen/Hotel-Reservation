@@ -1,14 +1,24 @@
 import * as bcrypt from 'bcrypt'
-import{IsString, isString} from 'class-validator'
+import{isNotEmpty, IsNotEmpty, IsString, isString} from 'class-validator'
 export class CreateUserDto{
-    readonly id:number;
-    @IsString()
-    firstName:string;
-    @IsString()
-    lastName:string;
-    @IsString()
-    password:string;
     
+    @IsString()
+    @IsNotEmpty()
+    firstName: string;
+
+    @IsString()
+    @IsNotEmpty()
+    email: string;
+
+    @IsString()
+    @IsNotEmpty()
+    lastName: string;
+
+    @IsString()
+    @IsNotEmpty()
+    password: string;
+    
+    @IsNotEmpty()
     isActive:boolean;
   static id: any;
   static lastName: any;

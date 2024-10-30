@@ -14,13 +14,13 @@ export class ReservationsController {
     }
 
     @Get('user')
-    async findReservationsByUser(@Param('userId')userId:number){
-        return this.reservationsService.findReservationsByUser(userId)
+    async findReservationsByUser(@Param('email') email: string){
+        return this.reservationsService.findReservationsByUser(email)
     }
 
     @Get('room')
-    async findReservationByRoom(@Param('roomId')roomId:number){
-        return this.reservationsService.findReservationsByRoom(roomId)
+    async findReservationByRoom(@Param('roomNumber')roomNumber:number){
+        return this.reservationsService.findReservationsByRoom(roomNumber)
     }
 
     @Post()

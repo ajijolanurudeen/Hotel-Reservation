@@ -1,15 +1,17 @@
- import { IsString } from "class-validator";
+ import { IsNotEmpty, IsString } from "class-validator";
 export class createHotelsDto{
-    readonly id:number;
     
     @IsString()
-    name:string;
+    @IsNotEmpty()
+    name: string;
 
     @IsString()
-    adress:string;
+    @IsNotEmpty()
+    adress: string;
 
     @IsString()
-    location:string
+    @IsNotEmpty()
+    location: string
     static id: any;
 
 }

@@ -33,6 +33,7 @@ import { ReservationsController } from './reservations/reservations.controller';
       password: process.env.POSTGRES_PASSWORD,
       database: process.env.POSTGRES_DATABASE,
       entities: [User,Hotels,Room,Reservation],
+      synchronize:true
     }),
     usersModule,
     AuthModule,

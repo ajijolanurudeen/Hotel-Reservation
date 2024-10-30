@@ -3,44 +3,39 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Hotels } from './entity/hotels.entity';
 import { createHotelsDto } from './dto/create-hotels-dto';
+import { hotelInterface } from './interfaces/hotel.interfaces';
 @Injectable()
 export class HotelsService {
     constructor(@InjectRepository(Hotels)
 private hotelsRepository:Repository<Hotels>
 ){}
 
-async createHotels(createHotelsDto:createHotelsDto):Promise<Hotels>{
+async createHotels(createHotelsDto:hotelInterface):Promise<Hotels>{
     
-    const hotelId=createHotelsDto.id;
-    const hotelAlreadyExists=await this.hotelsRepository
-    .createQueryBuilder('hotel')
-    .where('hotel.id=:hotelId',{hotelId})
-    .getOne();
+    const {
+        name,
+        adress,
+        location
+    }=createHotelsDto;
+    const hotelAlreadyExists=await this.hotelsRepository.findOne({
+        where:{
+            name
+        }
+    })
     if(hotelAlreadyExists){
         throw new HttpException('hotel id already exists',HttpStatus.BAD_REQUEST);
       }
       
-      const hotel =this.hotelsRepository.create(createHotelsDto)
+      const hotel =this.hotelsRepository.save({
+        ...createHotelsDto
+    })
   
-      await this.hotelsRepository.save(hotel);
       return hotel
 }
 
 findAll():Promise<Hotels[]>{
     return this.hotelsRepository.find()
 }
-
-// async findOneByHotelName(name:string):Promise<Hotels>{
-
-//     const hotel = await this.hotelsRepository
-//     .createQueryBuilder('hotel')
-//     .where('hotel.name =:name',{name})
-//     .getOne()
-//     if(!hotel){
-//         throw new NotFoundException(`hotel with this name '${name}'not found`)
-//     }
-//     return hotel
-// }
 
 async findOne(name: string): Promise<Hotels | null> {
     try {
